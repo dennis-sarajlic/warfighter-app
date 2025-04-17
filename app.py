@@ -11,11 +11,10 @@ from database import init_db
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode='threading')  # use 'threading' to match your model
+socketio = SocketIO(app, async_mode='threading', cors_allowed_origins=["http://127.0.0.1:5000"])  # use 'threading' to match your model
 
 # Make socketio available to ble_subscribe
 set_socketio(socketio)
-
 
 # Create a persistent background event loop
 event_loop = asyncio.new_event_loop()
@@ -64,6 +63,5 @@ async def disconnect_route():
     
 
 if __name__ == '__main__':
-    print('yes')
     init_db()
-    app.run(debug=True)
+    socketio.run(app, debug=True)
