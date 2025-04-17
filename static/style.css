@@ -1,0 +1,26 @@
+.device-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.device-name {
+    font-weight: bold;
+}
+
+.connect-button {
+    margin-top: 8px;
+}
+
+/* Scrollable container */
+#device-list-container {
+    max-height: 400px; /* Adjust based on your design */
+    overflow-y: auto;
+    border: 3px solid #0d5fbd;
+    padding: 10px;
+    margin-top: 10px;
+    width: 300px;
+}
