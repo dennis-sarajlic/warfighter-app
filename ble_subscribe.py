@@ -10,6 +10,13 @@ PPG_UUID = "87654321-4321-4321-4321-cba987654321"
 clients = dict()
 disconnect_events = dict()
 
+# Setting up websocket
+socketio = None
+
+def set_socketio(sio):
+    global socketio
+    socketio = sio
+
 def handle_gsr(sender, data):
     gsr_values = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
     print(f"GSR Data from {sender}: {gsr_values}")
