@@ -64,5 +64,6 @@ async def disconnect_route():
     
 
 if __name__ == '__main__':
+    print('yes')
     init_db()
     app.run(debug=True)
