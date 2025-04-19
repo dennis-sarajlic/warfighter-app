@@ -25,3 +25,17 @@
     width: 300px;
 }
 
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;         /* center horizontally */
+    justify-content: center;     /* center vertically (if you want) */
+    min-height: 100vh;           /* optional: center on full page height */
+    gap: 40px;                   /* spacing between charts */
+}
+
+.ppgGraph,
+.gsrGraph {
+    width: 500px;
+    height: 300px;
+}

@@ -68,7 +68,7 @@ const ppgChart = new Chart(ctx, {
     datasets: [{
       label: 'PPG',
       data: [],
-      borderColor: 'rgba(75, 192, 192, 1)',
+      borderColor: 'rgb(0, 0, 0)',
       borderWidth: 2,
       tension: 0.3,
       fill: false
@@ -76,6 +76,13 @@ const ppgChart = new Chart(ctx, {
   },
   options: {
     animation: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    elements: {
+      point: {
+        radius: 0 
+      }
+    },
     scales: {
       x: {
         display: false
@@ -105,16 +112,17 @@ socket.on('ppg_data', (msg) => {
 });
 
 const ctx_gsr = document.getElementById('gsrChart').getContext('2d');
+const labels = Array.from({ length: MAX_POINTS }, (_, i) => (i * 15 / (MAX_POINTS - 1)).toFixed(2));
 
 // Initialize chart with empty data
 const gsrChart = new Chart(ctx_gsr, {
   type: 'line',
   data: {
-    labels: Array(MAX_POINTS).fill(''), // blank x-axis labels for now
+    labels: labels,
     datasets: [{
       label: 'GSR',
       data: [],
-      borderColor: 'rgba(75, 192, 192, 1)',
+      borderColor: 'rgb(0, 0, 0)',
       borderWidth: 2,
       tension: 0.3,
       fill: false
@@ -122,11 +130,29 @@ const gsrChart = new Chart(ctx_gsr, {
   },
   options: {
     animation: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    elements: {
+      point: {
+        radius: 0 
+      }
+    },
     scales: {
       x: {
-        display: false
+        title: {
+          display: true,
+          text: 'Time (s)'
+        },
+        ticks: {
+          stepSize: 25, 
+          maxTicksLimit: 16
+        }
       },
       y: {
+        title: {
+          display: true,
+          text: 'Amplitude'
+        },
         beginAtZero: false
       }
     }
@@ -142,7 +168,7 @@ socket.on('gsr_data', (msg) => {
 
   // Keep only the last MAX_POINTS
   if (gsrChart.data.datasets[0].data.length > MAX_POINTS) {
-    gsrChartChart.data.datasets[0].data =
+    gsrChart.data.datasets[0].data =
       gsrChart.data.datasets[0].data.slice(-MAX_POINTS);
   }
 

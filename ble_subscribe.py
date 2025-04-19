@@ -19,13 +19,17 @@ def set_socketio(sio):
 
 def handle_gsr(sender, data):
     gsr_values = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
-    print(f"GSR Data from {sender}: {gsr_values}")
+    #print(f"GSR Data from {sender}: {gsr_values}")
     store_signal("GSR", gsr_values)
-    socketio.emit("gsr_data", {'data':[1,1,1,1,1]})
+
+    # Fix the error
+    gsr_values[0] = gsr_values[1]
+
+    socketio.emit("gsr_data", {'data':gsr_values})
 
 def handle_ppg(sender, data):
     ppg_values = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
-    print(f"PPG Data from {sender}: {ppg_values}")
+    #print(f"PPG Data from {sender}: {ppg_values}")
     store_signal("PPG", ppg_values)
     socketio.emit("ppg_data", {'data':ppg_values})
 

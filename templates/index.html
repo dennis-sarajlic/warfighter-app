@@ -17,8 +17,15 @@
         <div id="device-list"></div>
     </div>
 
-    <canvas id="ppgChart" width="10" height="10"></canvas>
-    <canvas id="gsrChart" width="10" height="10"></canvas>
+    <div class="chart-container">
+        <div class="ppgGraph">
+            <canvas id="ppgChart"></canvas>
+        </div>
+    
+        <div class="gsrGraph">
+            <canvas id="gsrChart"></canvas>
+        </div>
+    </div>
 
     <!-- Link to external JavaScript file -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
