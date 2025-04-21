@@ -12,6 +12,7 @@
 <body>
     
     <div class="top-bar">
+        <img src="{{ url_for('static', filename='NIUVT_Logo.png') }}" alt="Logo" width="200">
         <h1>Warfighter Sense</h1>
     </div>
     
@@ -49,6 +50,11 @@
                 <div id="fatigue-percentage" class="percentage">0%</div>
             </div>
         </div>
+    </div>
+
+    <div class="database-controls">
+        <button id="reset-db-btn" class="action-button danger">Reset Database</button>
+        <button id="export-csv-btn" class="action-button">Download CSV</button>
     </div>
 
     <!-- Link to external JavaScript file -->

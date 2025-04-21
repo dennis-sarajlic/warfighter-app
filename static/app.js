@@ -247,3 +247,63 @@ function updateBarColor(bar, percentage) {
         bar.style.backgroundColor = '#F44336'; // Red
     }
 }
+
+// Add event listeners once DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Reset database button
+  const resetDbBtn = document.getElementById('reset-db-btn');
+  if (resetDbBtn) {
+      resetDbBtn.addEventListener('click', resetDatabase);
+  }
+  
+  // Export CSV button
+  const exportCsvBtn = document.getElementById('export-csv-btn');
+  if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', exportCsv);
+  }
+});
+
+// Function to reset the database
+async function resetDatabase() {
+  // Show confirmation dialog
+  if (!confirm('Are you sure you want to reset the database? This will delete all signal data.')) {
+      return; // User cancelled
+  }
+  
+  try {
+      const response = await fetch('/reset_db', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+          alert(result.message);
+          
+          // Clear charts
+          if (ppgChart && ppgChart.data && ppgChart.data.datasets) {
+              ppgChart.data.datasets[0].data = [];
+              ppgChart.update();
+          }
+          
+          if (gsrChart && gsrChart.data && gsrChart.data.datasets) {
+              gsrChart.data.datasets[0].data = [];
+              gsrChart.update();
+          }
+      } else {
+          alert('Failed to reset database: ' + result.message);
+      }
+  } catch (error) {
+      console.error('Error resetting database:', error);
+      alert('An error occurred while resetting the database.');
+  }
+}
+
+// Function to export data as CSV
+function exportCsv() {
+  // Since this is a file download, we'll navigate to the URL directly
+  window.location.href = '/export_csv';
+}

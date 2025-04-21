@@ -1,14 +1,25 @@
 .top-bar {
     background-color: #003366; /* Dark blue */
     color: white;
-    padding: 1rem 0;
-    text-align: center;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .top-bar h1 {
     margin: 0;
     font-size: 2rem;
+    flex: 1;
+    text-align: center;
+}
+
+.top-bar img.logo {
+    height: 40px;
+    position: absolute;
+    left: 2rem;
 }
 
 .scan-button {
@@ -58,7 +69,7 @@
 
 .top-right-bars {
     position: absolute;
-    top: 130px; /* distance below the top bar */
+    top: 200px; /* distance below the top bar */
     right: 20px;
     display: flex;
     flex-direction: column;
@@ -98,4 +109,33 @@
     color: black;
     font-weight: bold;
     text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.database-controls {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #45a049;
+}
+
+.action-button.danger {
+    background-color: #f44336;
+}
+
+.action-button.danger:hover {
+    background-color: #d32f2f;
 }

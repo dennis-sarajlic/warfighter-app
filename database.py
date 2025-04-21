@@ -1,4 +1,7 @@
 import sqlite3
+import csv
+import os
+from datetime import datetime
 
 def init_db():
     conn = sqlite3.connect('signals.db')
@@ -77,3 +80,54 @@ def get_signals(samples=25 * 120):
     gsr.reverse()
     
     return ppg, gsr
+
+def reset_db():
+    """Deletes the database file and reinitializes the schema."""
+    db_path = "signals.db"
+    
+    # Delete the file if it exists
+    if os.path.exists(db_path):
+        os.remove(db_path)
+    
+    # Recreate the database schema
+    init_db()
+
+    return {"success": True, "message": "Database file deleted and reset successfully"}
+
+
+def export_signals_to_csv():
+    """Export all signal data to a CSV file"""
+    
+    conn = sqlite3.connect("signals.db")
+    cursor = conn.cursor()
+    
+    # Get all signals
+    cursor.execute("SELECT id, ppg, gsr FROM signals ORDER BY id")
+    all_signals = cursor.fetchall()
+    
+    conn.close()
+    
+    # Create a timestamp for the filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"signals_export_{timestamp}.csv"
+    
+    # Ensure the exports directory exists
+    if not os.path.exists("exports"):
+        os.makedirs("exports")
+        
+    filepath = os.path.join("exports", filename)
+    
+    # Write data to CSV
+    with open(filepath, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        # Write header
+        csv_writer.writerow(['id', 'ppg', 'gsr'])
+        # Write data
+        csv_writer.writerows(all_signals)
+    
+    return {
+        "success": True, 
+        "message": "Data exported successfully",
+        "filename": filename,
+        "filepath": filepath
+    }
