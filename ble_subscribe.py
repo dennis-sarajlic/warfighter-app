@@ -1,6 +1,7 @@
 import asyncio
 from bleak import BleakClient
-from database import store_signal
+from database import store_signal, enough_data, get_signals
+from ml import make_prediction
 
 # Replace with your characteristic UUIDs
 GSR_UUID = "abcdef01-2345-6789-abcd-ef0123456789"
@@ -13,13 +14,15 @@ disconnect_events = dict()
 # Setting up websocket
 socketio = None
 
+# Keep track of when to make a prediction
+prediction_delay_count = 10
+
 def set_socketio(sio):
     global socketio
     socketio = sio
 
 def handle_gsr(sender, data):
     gsr_values = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
-    #print(f"GSR Data from {sender}: {gsr_values}")
     store_signal("GSR", gsr_values)
 
     # Fix the error
@@ -28,10 +31,21 @@ def handle_gsr(sender, data):
     socketio.emit("gsr_data", {'data':gsr_values})
 
 def handle_ppg(sender, data):
+    global prediction_delay_count
+
     ppg_values = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
-    #print(f"PPG Data from {sender}: {ppg_values}")
     store_signal("PPG", ppg_values)
     socketio.emit("ppg_data", {'data':ppg_values})
+
+    if prediction_delay_count != 10:
+        prediction_delay_count += 1
+
+    if prediction_delay_count == 10 and enough_data():
+        prediction_delay_count = 0 
+        ppg, gsr = get_signals()
+        stress_prediction, fatigue_prediction = make_prediction(ppg, gsr)
+        print(int(stress_prediction), int(fatigue_prediction))
+        socketio.emit("predictions", {'stress':int(stress_prediction), 'fatigue': int(fatigue_prediction)})
 
 async def connect_and_subscribe(address):
     if address in clients:
@@ -40,9 +54,7 @@ async def connect_and_subscribe(address):
 
     print(address)
     client = BleakClient(address)
-    print('yes1')
     await client.connect()
-    print('yes')
 
     if client.is_connected:
         print(f"Connected to {address}")

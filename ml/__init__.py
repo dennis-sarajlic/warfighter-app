@@ -1,0 +1,1 @@
+from .predict import make_prediction

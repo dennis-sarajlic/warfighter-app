@@ -104,9 +104,18 @@ def cvxEDA(y, delta, tau0=2., tau1=0.7, delta_knot=10., alpha=8e-4, gamma=1e-2,
     # .5*(M*q + B*l + C*d - y)^2 + alpha*sum(A,1)*p + .5*gamma*l'*l
     # s.t. A*q >= 0
 
+     # Save original options to restore later
     old_options = cv.solvers.options.copy()
+    
+    # Set up new options
     cv.solvers.options.clear()
-    cv.solvers.options.update(options)
+    updated_options = options.copy()
+    
+    # Control output verbosity
+    updated_options['show_progress'] = False
+    
+    cv.solvers.options.update(updated_options)
+    
     if solver == 'conelp':
         # Use conelp
         z = lambda m,n: cv.spmatrix([],[],[],(m,n))
