@@ -1,3 +1,20 @@
+.top-bar {
+    background-color: #003366; /* Dark blue */
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.scan-button {
+    margin-top: 10px;  
+}
+
 .device-card {
     border: 1px solid #0682af;
     padding: 10px;
@@ -29,7 +46,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;         /* center horizontally */
-    justify-content: center;     /* center vertically (if you want) */
     min-height: 100vh;           /* optional: center on full page height */
     gap: 40px;                   /* spacing between charts */
 }
@@ -40,10 +56,27 @@
     height: 300px;
 }
 
+.top-right-bars {
+    position: absolute;
+    top: 130px; /* distance below the top bar */
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* space between bars */
+}
+
+.bar-section {
+    width: 300px;
+}
+
+.label {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
 .progress-container {
-    width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
+    width: 300px; /* Set a fixed width or keep max-width */
     background-color: #e0e0e0;
     border-radius: 5px;
     position: relative;
@@ -65,9 +98,4 @@
     color: black;
     font-weight: bold;
     text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
-}
-
-.label {
-    font-weight: bold;
-    margin-bottom: 5px;
 }
