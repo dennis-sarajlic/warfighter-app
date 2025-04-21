@@ -27,6 +27,18 @@
         </div>
     </div>
 
+    <div class="label">Stress Level</div>
+    <div class="progress-container">
+        <div id="stress-bar" class="progress-bar"></div>
+        <div id="stress-percentage" class="percentage">0%</div>
+    </div>
+    
+    <div class="label">Fatigue Level</div>
+    <div class="progress-container">
+        <div id="fatigue-bar" class="progress-bar"></div>
+        <div id="fatigue-percentage" class="percentage">0%</div>
+    </div>
+
     <!-- Link to external JavaScript file -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>

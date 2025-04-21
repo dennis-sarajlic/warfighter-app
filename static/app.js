@@ -175,3 +175,75 @@ socket.on('gsr_data', (msg) => {
   // Update chart
   gsrChart.update();
 });
+
+
+// Initialize queues for stress and fatigue with 200 zeros
+const MAX_QUEUE_SIZE = 200;
+let stressQueue = Array(MAX_QUEUE_SIZE).fill(0);
+let fatigueQueue = Array(MAX_QUEUE_SIZE).fill(0);
+
+// Add these lines to your existing JavaScript file
+// The socket variable is already defined in your code
+
+// Listen for 'predictions' events from the server
+socket.on('predictions', function(data) {
+    // Add new predictions to the queues and remove oldest ones
+    stressQueue.push(data.stress);
+    stressQueue.shift();
+    
+    fatigueQueue.push(data.fatigue);
+    fatigueQueue.shift();
+    
+    // Update the progress bars
+    updateBars();
+});
+
+// Function to update both progress bars
+function updateBars() {
+    // Get references to the progress bars
+    const stressBar = document.getElementById('stress-bar');
+    const fatigueBar = document.getElementById('fatigue-bar');
+    const stressPercentage = document.getElementById('stress-percentage');
+    const fatiguePercentage = document.getElementById('fatigue-percentage');
+    
+    // Calculate the sum of values in each queue
+    const stressSum = stressQueue.reduce((acc, val) => acc + val, 0);
+    const fatigueSum = fatigueQueue.reduce((acc, val) => acc + val, 0);
+    
+    // Calculate percentages
+    const stressPercentValue = (stressSum / MAX_QUEUE_SIZE) * 100;
+    const fatiguePercentValue = (fatigueSum / MAX_QUEUE_SIZE) * 100;
+    
+    // Update the progress bars
+    if (stressBar) {
+        stressBar.style.width = `${stressPercentValue}%`;
+        updateBarColor(stressBar, stressPercentValue);
+    }
+    
+    if (fatigueBar) {
+        fatigueBar.style.width = `${fatiguePercentValue}%`;
+        updateBarColor(fatigueBar, fatiguePercentValue);
+    }
+    
+    // Update percentage text if elements exist
+    if (stressPercentage) {
+        stressPercentage.textContent = `${Math.round(stressPercentValue)}%`;
+    }
+    
+    if (fatiguePercentage) {
+        fatiguePercentage.textContent = `${Math.round(fatiguePercentValue)}%`;
+    }
+}
+
+// Function to change bar color based on percentage
+function updateBarColor(bar, percentage) {
+    if (percentage < 25) {
+        bar.style.backgroundColor = '#4CAF50'; // Green
+    } else if (percentage < 50) {
+        bar.style.backgroundColor = '#FFC107'; // Amber
+    } else if (percentage < 75) {
+        bar.style.backgroundColor = '#FF9800'; // Orange
+    } else {
+        bar.style.backgroundColor = '#F44336'; // Red
+    }
+}
