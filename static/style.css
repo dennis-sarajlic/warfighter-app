@@ -54,11 +54,11 @@
 }
 
 .chart-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;         /* center horizontally */
-    min-height: 100vh;           /* optional: center on full page height */
-    gap: 40px;                   /* spacing between charts */
+    align-items: center;
+    gap: 40px;
 }
 
 .ppgGraph,
@@ -68,12 +68,10 @@
 }
 
 .top-right-bars {
-    position: absolute;
-    top: 200px; /* distance below the top bar */
-    right: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* space between bars */
+    gap: 50px; /* This controls the vertical space between bars */
+    position: static; 
 }
 
 .bar-section {
@@ -138,4 +136,18 @@
 
 .action-button.danger:hover {
     background-color: #d32f2f;
+}
+
+.control-section,
+.top-right-bars {
+    min-width: 250px;
+}
+
+.main-layout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    margin-top: 1rem;
 }

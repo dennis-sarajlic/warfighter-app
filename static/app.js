@@ -85,7 +85,10 @@ const ppgChart = new Chart(ctx, {
     },
     scales: {
       x: {
-        display: false
+        title: {
+          display: true,
+          text: 'Time (s)'
+        }
       },
       y: {
         beginAtZero: false
@@ -112,13 +115,12 @@ socket.on('ppg_data', (msg) => {
 });
 
 const ctx_gsr = document.getElementById('gsrChart').getContext('2d');
-const labels = Array.from({ length: MAX_POINTS }, (_, i) => (i * 15 / (MAX_POINTS - 1)).toFixed(2));
 
 // Initialize chart with empty data
 const gsrChart = new Chart(ctx_gsr, {
   type: 'line',
   data: {
-    labels: labels,
+    labels: Array(MAX_POINTS).fill(''),
     datasets: [{
       label: 'GSR',
       data: [],
@@ -142,10 +144,6 @@ const gsrChart = new Chart(ctx_gsr, {
         title: {
           display: true,
           text: 'Time (s)'
-        },
-        ticks: {
-          stepSize: 25, 
-          maxTicksLimit: 16
         }
       },
       y: {

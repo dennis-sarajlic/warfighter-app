@@ -9,8 +9,11 @@ def process_ppg(ppg, sf=25):
     ppg_filtered = filtfilt(b, a, ppg)
 
     # --- Peak detection ---
-    min_peak_distance = int(round(sf * 0.3))
-    peaks, _ = find_peaks(ppg_filtered, distance=min_peak_distance, prominence=0.2)
+    quantile_thresh = np.quantile(ppg_filtered, 0.85)
+    window_size = int(0.15 * sf)  # ~150 ms window
+    ppg_smoothed = np.convolve(ppg_filtered, np.ones(window_size)/window_size, mode='same')
+    min_peak_distance = int(round(sf * 0.35))
+    peaks, _ = find_peaks(ppg_smoothed, distance=min_peak_distance, prominence=np.std(ppg_smoothed)*0.7, height=quantile_thresh)
     peak_times = peaks / sf
 
     # --- NN intervals ---

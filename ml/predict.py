@@ -31,6 +31,8 @@ def make_prediction(ppg_signal, gsr_signal):
     # Create feature array for prediction
     features = np.array([[ns_scr, lf_hf_ratio, rmssd, sdnn, mean_hr, ap_en]])
 
+    print(mean_hr, lf_hf_ratio, sdnn, rmssd, ap_en, mean_scl, ns_scr)
+
     # Generate predictions
     stress_prediction = stress_model.predict(features)
     fatigue_prediction = fatigue_model.predict(features)
