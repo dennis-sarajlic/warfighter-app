@@ -43,9 +43,9 @@ def handle_ppg(sender, data):
     if prediction_delay_count == 10 and enough_data():
         prediction_delay_count = 0 
         ppg, gsr = get_signals()
-        stress_prediction, fatigue_prediction = make_prediction(ppg, gsr)
-        print(int(stress_prediction), int(fatigue_prediction))
-        socketio.emit("predictions", {'stress':int(stress_prediction), 'fatigue': int(fatigue_prediction)})
+        stress_prediction, stress_proba = make_prediction(ppg, gsr)
+        print(int(stress_prediction), float(stress_proba))
+        socketio.emit("predictions", {'stress':int(stress_prediction), 'stress_proba': float(stress_proba)})
 
 async def connect_and_subscribe(address):
     if address in clients:

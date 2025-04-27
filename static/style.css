@@ -1,5 +1,60 @@
+/* Common Button Styling */
+button {
+    padding: 10px 15px;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Specific button classes while maintaining the new style */
+.scan-button {
+    margin-top: 10px;
+}
+
+.connect-button {
+    margin-top: 8px;
+}
+
+.action-button {
+    padding: 10px 15px;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* If you still want a different style for danger buttons but keeping with your theme */
+.action-button.danger {
+    border-color: #d32f2f;
+    color: #d32f2f;
+    background-color: #ffffff;
+}
+
+.action-button.danger:hover {
+    background-color: #d32f2f;
+    color: #ffffff;
+}
+
+/* The rest of your CSS remains unchanged */
 .top-bar {
-    background-color: #003366; /* Dark blue */
+    background-color: #143556; /* Dark blue */
     color: white;
     padding: 1rem 2rem;
     display: flex;
@@ -11,23 +66,13 @@
 
 .top-bar h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 3rem;
     flex: 1;
     text-align: center;
 }
 
-.top-bar img.logo {
-    height: 40px;
-    position: absolute;
-    left: 2rem;
-}
-
-.scan-button {
-    margin-top: 10px;  
-}
-
 .device-card {
-    border: 1px solid #0682af;
+    border: 1px solid #000000;
     padding: 10px;
     margin: 8px 0;
     border-radius: 6px;
@@ -39,15 +84,11 @@
     font-weight: bold;
 }
 
-.connect-button {
-    margin-top: 8px;
-}
-
 /* Scrollable container */
 #device-list-container {
     max-height: 400px; /* Adjust based on your design */
     overflow-y: auto;
-    border: 3px solid #0d5fbd;
+    border: 3px solid #000000;
     padding: 10px;
     margin-top: 10px;
     width: 300px;
@@ -70,7 +111,6 @@
 .top-right-bars {
     display: flex;
     flex-direction: column;
-    gap: 50px; /* This controls the vertical space between bars */
     position: static; 
 }
 
@@ -115,29 +155,6 @@
     gap: 10px;
 }
 
-.action-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.action-button:hover {
-    background-color: #45a049;
-}
-
-.action-button.danger {
-    background-color: #f44336;
-}
-
-.action-button.danger:hover {
-    background-color: #d32f2f;
-}
-
 .control-section,
 .top-right-bars {
     min-width: 250px;
@@ -150,4 +167,8 @@
     gap: 2rem;
     padding: 2rem;
     margin-top: 1rem;
+}
+
+.spacer {
+    height: 40px; /* or whatever size gap you want */
 }

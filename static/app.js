@@ -58,13 +58,15 @@ const socket = io("http://localhost:5000");
 
 const ctx = document.getElementById('ppgChart').getContext('2d');
 
-const MAX_POINTS = 375;  // 25 samples * 15 seconds
+const SAMPLE_RATE = 25;  // 25 Hz
+const MAX_SECONDS = 15;  // 15 seconds display window
+const MAX_POINTS = MAX_SECONDS * SAMPLE_RATE + 1;  // 376 samples (includes point at 0s and 15s)
 
 // Initialize chart with empty data
 const ppgChart = new Chart(ctx, {
   type: 'line',
   data: {
-    labels: Array(MAX_POINTS).fill(''), // blank x-axis labels for now
+    labels: Array(MAX_POINTS).fill(''), // Will be populated with time values
     datasets: [{
       label: 'PPG',
       data: [],
@@ -88,6 +90,13 @@ const ppgChart = new Chart(ctx, {
         title: {
           display: true,
           text: 'Time (s)'
+        },
+        ticks: {
+          autoSkip: false,
+          callback: function(value, index) {
+            // Only show ticks at each second (every 25 points, plus the first point)
+            return index % SAMPLE_RATE === 0 ? (index / SAMPLE_RATE) : '';
+          }
         }
       },
       y: {
@@ -109,6 +118,9 @@ socket.on('ppg_data', (msg) => {
     ppgChart.data.datasets[0].data =
       ppgChart.data.datasets[0].data.slice(-MAX_POINTS);
   }
+
+  // Update x-axis labels based on current data points
+  ppgChart.data.labels = Array(ppgChart.data.datasets[0].data.length).fill('');
 
   // Update chart
   ppgChart.update();
@@ -144,6 +156,13 @@ const gsrChart = new Chart(ctx_gsr, {
         title: {
           display: true,
           text: 'Time (s)'
+        },
+        ticks: {
+          autoSkip: false,
+          callback: function(value, index) {
+            // Only show ticks at each second (every 25 points, plus the first point)
+            return index % SAMPLE_RATE === 0 ? (index / SAMPLE_RATE) : '';
+          }
         }
       },
       y: {
@@ -157,7 +176,7 @@ const gsrChart = new Chart(ctx_gsr, {
   }
 });
 
-// When new PPG data comes in
+// When new GSR data comes in
 socket.on('gsr_data', (msg) => {
   const newData = msg.data;  // array of numbers
 
@@ -170,15 +189,16 @@ socket.on('gsr_data', (msg) => {
       gsrChart.data.datasets[0].data.slice(-MAX_POINTS);
   }
 
+  // Update x-axis labels based on current data points
+  gsrChart.data.labels = Array(gsrChart.data.datasets[0].data.length).fill('');
+
   // Update chart
   gsrChart.update();
 });
 
-
-// Initialize queues for stress and fatigue with 200 zeros
+// Initialize queues for stress with 200 zeros
 const MAX_QUEUE_SIZE = 200;
 let stressQueue = Array(MAX_QUEUE_SIZE).fill(0);
-let fatigueQueue = Array(MAX_QUEUE_SIZE).fill(0);
 
 // Add these lines to your existing JavaScript file
 // The socket variable is already defined in your code
@@ -188,29 +208,44 @@ socket.on('predictions', function(data) {
     // Add new predictions to the queues and remove oldest ones
     stressQueue.push(data.stress);
     stressQueue.shift();
-    
-    fatigueQueue.push(data.fatigue);
-    fatigueQueue.shift();
-    
+
     // Update the progress bars
     updateBars();
+
+    const stressProba = data.stress_proba;
+  
+    // Convert to percentage (0-100)
+    const stressPercentage = Math.round(stressProba * 100);
+    
+    // Update the progress bar width
+    const stressBar = document.getElementById('stress-proba-bar');
+    stressBar.style.width = `${stressPercentage}%`;
+    
+    // Update the percentage text
+    const percentageText = document.getElementById('stress-proba-percentage');
+    percentageText.textContent = `${stressPercentage}%`;
+    
+    // Set color based on stress level
+    if (stressPercentage < 30) {
+      stressBar.style.backgroundColor = '#4CAF50'; // Green for low stress
+    } else if (stressPercentage < 70) {
+      stressBar.style.backgroundColor = '#FFC107'; // Yellow/amber for medium stress
+    } else {
+      stressBar.style.backgroundColor = '#F44336'; // Red for high stress
+    }
 });
 
 // Function to update both progress bars
 function updateBars() {
     // Get references to the progress bars
     const stressBar = document.getElementById('stress-bar');
-    const fatigueBar = document.getElementById('fatigue-bar');
     const stressPercentage = document.getElementById('stress-percentage');
-    const fatiguePercentage = document.getElementById('fatigue-percentage');
     
     // Calculate the sum of values in each queue
     const stressSum = stressQueue.reduce((acc, val) => acc + val, 0);
-    const fatigueSum = fatigueQueue.reduce((acc, val) => acc + val, 0);
     
     // Calculate percentages
     const stressPercentValue = (stressSum / MAX_QUEUE_SIZE) * 100;
-    const fatiguePercentValue = (fatigueSum / MAX_QUEUE_SIZE) * 100;
     
     // Update the progress bars
     if (stressBar) {
@@ -218,18 +253,9 @@ function updateBars() {
         updateBarColor(stressBar, stressPercentValue);
     }
     
-    if (fatigueBar) {
-        fatigueBar.style.width = `${fatiguePercentValue}%`;
-        updateBarColor(fatigueBar, fatiguePercentValue);
-    }
-    
     // Update percentage text if elements exist
     if (stressPercentage) {
         stressPercentage.textContent = `${Math.round(stressPercentValue)}%`;
-    }
-    
-    if (fatiguePercentage) {
-        fatiguePercentage.textContent = `${Math.round(fatiguePercentValue)}%`;
     }
 }
 

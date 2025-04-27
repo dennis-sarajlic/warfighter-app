@@ -35,6 +35,6 @@ def make_prediction(ppg_signal, gsr_signal):
 
     # Generate predictions
     stress_prediction = stress_model.predict(features)
-    fatigue_prediction = fatigue_model.predict(features)
+    stress_proba = stress_model.predict_proba(features)[0][1]
 
-    return stress_prediction, fatigue_prediction
+    return stress_prediction, stress_proba
