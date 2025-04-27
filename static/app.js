@@ -100,6 +100,10 @@ const ppgChart = new Chart(ctx, {
         }
       },
       y: {
+        title: {
+          display: true,
+          text: 'Amplitude'
+        },
         beginAtZero: false
       }
     }
@@ -255,7 +259,7 @@ function updateBars() {
     
     // Update percentage text if elements exist
     if (stressPercentage) {
-        stressPercentage.textContent = `${Math.round(stressPercentValue)}%`;
+        stressPercentage.textContent = `${stressSum}/${MAX_QUEUE_SIZE}`;
     }
 }
 

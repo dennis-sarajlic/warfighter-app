@@ -12,26 +12,22 @@ from processing import process_ppg, process_gsr
 
 # Construct full paths to the model files
 base_dir = os.path.dirname(__file__)
-stress_model_path = os.path.join(base_dir, 'stress_holder.pkl')
-fatigue_model_path = os.path.join(base_dir, 'fatigue_holder.pkl')
+stress_model_path = os.path.join(base_dir, 'stress_model.pkl')
 
 # Import trained models
 with open(stress_model_path, 'rb') as f:
     stress_model = pickle.load(f)
 
-with open(fatigue_model_path, 'rb') as f:
-    fatigue_model = pickle.load(f)
-
 def make_prediction(ppg_signal, gsr_signal):
     
     # Get features
     mean_hr, lf_hf_ratio, sdnn, rmssd, ap_en = process_ppg(ppg_signal)
-    mean_scl, ns_scr = process_gsr(gsr_signal)
+    mean_scl, ns_scr, tvsymp_mean = process_gsr(gsr_signal)
 
     # Create feature array for prediction
-    features = np.array([[ns_scr, lf_hf_ratio, rmssd, sdnn, mean_hr, ap_en]])
+    features = np.array([[tvsymp_mean, lf_hf_ratio, rmssd, sdnn, mean_hr, ap_en]])
 
-    print(mean_hr, lf_hf_ratio, sdnn, rmssd, ap_en, mean_scl, ns_scr)
+    print(mean_hr, lf_hf_ratio, sdnn, rmssd, ap_en, tvsymp_mean)
 
     # Generate predictions
     stress_prediction = stress_model.predict(features)

@@ -2,6 +2,7 @@ import numpy as np
 from scipy.signal import butter, filtfilt, medfilt, firwin, resample, hilbert
 from scipy.stats import zscore
 from .cvxEDA import cvxEDA 
+from .vfcdm import extract_vfccdm
 
 
 def zcd(signal):
@@ -30,4 +31,17 @@ def process_gsr(eda, sf=25):
     zero_crossings = zcd(eda_phasic_driver - 0.05)
     ns_scr = (len(zero_crossings) / 2) / duration_minutes
 
-    return mean_scl, ns_scr
+    # --- Derive TVsymp Mean ---
+    eda_ds = resample(eda_filtered, 2 * len(eda_filtered) // fs)
+    b_n, a_n = butter(6, 0.24)
+    eda_ds = filtfilt(b_n, a_n, eda_ds)
+    b, a = butter(4, 0.01, btype='high')
+    eda_vfcdm = filtfilt(b, a, eda_ds)
+    comp1 = extract_vfccdm(eda_ds, 64, 8)
+    y = np.sum(comp1[:, 1:3], axis=1)
+    y = y/np.std(y)
+    tvsymp = np.abs(hilbert(y))
+    tvsymp_mean = np.mean(tvsymp)
+
+
+    return mean_scl, ns_scr, tvsymp_mean
