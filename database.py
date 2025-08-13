@@ -7,11 +7,16 @@ def init_db():
     conn = sqlite3.connect('signals.db')
     cursor = conn.cursor()
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS signals (
+        CREATE TABLE IF NOT EXISTS gsr_signal (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ppg INTEGER,
             gsr INTEGER
-        )
+        );
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ppg_signal (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ppg INTEGER      
+        );
     ''')
     conn.commit()
     conn.close()
@@ -22,10 +27,10 @@ def store_signal(signal_type, values):
 
     if signal_type == "PPG":
         for value in values:
-            cursor.execute("INSERT INTO signals (ppg, gsr) VALUES (?, NULL)", (value,))
+            cursor.execute("INSERT INTO ppg_signal (ppg) VALUES (?)", (value,))
     elif signal_type == "GSR":
         for value in values:
-            cursor.execute("INSERT INTO signals (ppg, gsr) VALUES (NULL, ?)", (value,))
+            cursor.execute("INSERT INTO gsr_signal (gsr) VALUES (?)", (value,))
     
     conn.commit()
     conn.close()
@@ -37,10 +42,10 @@ def enough_data(min_samples=25 * 120):
     cursor = conn.cursor()
 
     # Count the number of non-null PPG and GSR entries
-    cursor.execute("SELECT COUNT(ppg) FROM signals WHERE ppg IS NOT NULL")
+    cursor.execute("SELECT COUNT(ppg) FROM ppg_signal WHERE ppg IS NOT NULL")
     ppg_count = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(gsr) FROM signals WHERE gsr IS NOT NULL")
+    cursor.execute("SELECT COUNT(gsr) FROM gsr_signal WHERE gsr IS NOT NULL")
     gsr_count = cursor.fetchone()[0]
 
     conn.close()
@@ -54,17 +59,13 @@ def get_signals(samples=25 * 120):
 
     # Get the PPG and GSR values separately
     cursor.execute("""
-        SELECT id, ppg FROM signals 
-        WHERE ppg IS NOT NULL 
-        ORDER BY id DESC 
+        SELECT id, ppg FROM ppg_signal  
         LIMIT ?
     """, (samples,))
     ppg_data = cursor.fetchall()
     
     cursor.execute("""
-        SELECT id, gsr FROM signals 
-        WHERE gsr IS NOT NULL 
-        ORDER BY id DESC 
+        SELECT id, gsr FROM gsr_signal
         LIMIT ?
     """, (samples,))
     gsr_data = cursor.fetchall()
@@ -102,7 +103,11 @@ def export_signals_to_csv():
     cursor = conn.cursor()
     
     # Get all signals
-    cursor.execute("SELECT id, ppg, gsr FROM signals ORDER BY id")
+    cursor.execute("""
+    SELECT ppg_signal.id, ppg_signal.ppg, gsr_signal.gsr
+    FROM ppg_signal
+    INNER JOIN gsr_signal ON ppg_signal.id = gsr_signal.id
+    """)
     all_signals = cursor.fetchall()
     
     conn.close()
@@ -117,7 +122,7 @@ def export_signals_to_csv():
         
     filepath = os.path.join("exports", filename)
     
-    # Write data to CSV
+  # Write data to CSV
     with open(filepath, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
         # Write header

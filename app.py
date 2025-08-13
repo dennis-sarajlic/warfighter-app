@@ -60,9 +60,6 @@ async def disconnect_route():
         return jsonify({'message': f'Disconnected from {address}'})
     except Exception as e:
         return jsonify({'message': f'Failed to disconnect: {e}'}), 500
-    
-
-# Add these routes to your Flask app
 
 @app.route('/reset_db', methods=['POST'])
 def handle_reset_db():
