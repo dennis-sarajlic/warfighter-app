@@ -1,3 +1,4 @@
 cvxEDA.py
 vfcdm.py
-_pychache_/
+__pychache__/
+processing/__pychache__/
